@@ -44,7 +44,7 @@ const AddStudent = ({ onStudentAdded }) => {
     formData.append('file', file);
 
     try {
-      await api.post('/import/students', formData, {
+      const response = await api.post('/students', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -52,9 +52,13 @@ const AddStudent = ({ onStudentAdded }) => {
       if (onStudentAdded) onStudentAdded();
       setCsvError('');
       fileInputRef.current.value = '';
+      // Show success message
+      alert(`Successfully imported ${response.data.students.length} students`);
     } catch (error) {
       console.error('Error importing students:', error);
-      setCsvError('Error importing students. Please check the CSV format.');
+      const errorMessage = error.response?.data?.error || 'Error importing students. Please check the CSV format.';
+      setCsvError(errorMessage);
+      alert(errorMessage); // Show error in alert for better visibility
     }
   };
 
