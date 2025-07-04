@@ -6,7 +6,11 @@ import {
   Box,
   Divider,
   Typography,
-  Alert
+  Alert,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel
 } from '@mui/material';
 import api from '../api/config';
 
@@ -19,6 +23,10 @@ const AddStudent = ({ onStudentAdded }) => {
     section: ''
   });
   const [csvError, setCsvError] = useState('');
+
+  // Predefined options
+  const classOptions = ['CIC', 'CSE', 'IT', 'ECE', 'EEE', 'MECH', 'CIVIL'];
+  const sectionOptions = ['A', 'B', 'C', 'D'];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -112,24 +120,38 @@ const AddStudent = ({ onStudentAdded }) => {
           margin="normal"
           required
         />
-        <TextField
-          fullWidth
-          label="Class"
-          name="class"
-          value={formData.class}
-          onChange={handleChange}
-          margin="normal"
-          required
-        />
-        <TextField
-          fullWidth
-          label="Section"
-          name="section"
-          value={formData.section}
-          onChange={handleChange}
-          margin="normal"
-          required
-        />
+        <FormControl fullWidth margin="normal" required>
+          <InputLabel>Class</InputLabel>
+          <Select
+            name="class"
+            value={formData.class}
+            onChange={handleChange}
+            label="Class"
+            inputProps={{
+              autoComplete: 'off'
+            }}
+          >
+            {classOptions.map(option => (
+              <MenuItem key={option} value={option}>{option}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl fullWidth margin="normal" required>
+          <InputLabel>Section</InputLabel>
+          <Select
+            name="section"
+            value={formData.section}
+            onChange={handleChange}
+            label="Section"
+            inputProps={{
+              autoComplete: 'off'
+            }}
+          >
+            {sectionOptions.map(option => (
+              <MenuItem key={option} value={option}>{option}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <TextField
           fullWidth
           label="Class"
