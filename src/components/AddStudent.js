@@ -35,8 +35,17 @@ const AddStudent = ({ onStudentAdded }) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    if (file.type !== 'text/csv') {
-      setCsvError('Please upload a CSV file');
+    console.log('Selected file:', {
+      name: file.name,
+      type: file.type,
+      size: file.size
+    });
+
+    // Accept both text/csv and application/vnd.ms-excel (some systems save CSV with this type)
+    if (file.type !== 'text/csv' && file.type !== 'application/vnd.ms-excel') {
+      const errorMsg = `Invalid file type: ${file.type}. Please upload a CSV file`;
+      console.error(errorMsg);
+      setCsvError(errorMsg);
       return;
     }
 
@@ -44,18 +53,30 @@ const AddStudent = ({ onStudentAdded }) => {
     formData.append('file', file);
 
     try {
+      console.log('Sending file to server...');
       const response = await api.post('/students', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
+      
+      console.log('Server response:', response.data);
+      
       if (onStudentAdded) onStudentAdded();
       setCsvError('');
       fileInputRef.current.value = '';
+      
       // Show success message
-      alert(`Successfully imported ${response.data.students.length} students`);
+      const successMsg = `Successfully imported ${response.data.students.length} students`;
+      console.log(successMsg);
+      alert(successMsg);
     } catch (error) {
-      console.error('Error importing students:', error);
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+      
       const errorMessage = error.response?.data?.error || 'Error importing students. Please check the CSV format.';
       setCsvError(errorMessage);
       alert(errorMessage); // Show error in alert for better visibility
